@@ -266,9 +266,8 @@ variable "smrtlink" {
     install_lite            = optional(bool, true)
     workers_count           = optional(number, 4)
     keycloak_user_passwords = object({
-      admin        = string
-      pbicsuser    = string
-      pbinstrument = string
+      admin     = string
+      pbicsuser = string
     })
     smtp = optional(object({
       host     = string
@@ -312,9 +311,8 @@ variable "smrtlink" {
     install_lite            = true
     workers_count           = 4
     keycloak_user_passwords = {
-      admin        = ""
-      pbicsuser    = ""
-      pbinstrument = ""
+      admin     = ""
+      pbicsuser = ""
     }
     smtp = {
       host     = ""
