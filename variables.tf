@@ -218,7 +218,14 @@ variable "smrtlink" {
   description = "Configuration for the smrt-link server"
   type        = object({
     domain_name = optional(string, "")
-    user        = optional(object({
+    tls_custom  = optional(object({
+      cert = string
+      key  = string
+    }), {
+      cert = ""
+      key  = ""
+    })
+    user = optional(object({
       name                = string
       ssh_authorized_keys = list(string)
     }), {
@@ -276,8 +283,12 @@ variable "smrtlink" {
     })
   })
   default = {
-    domain_name       = ""
-    user              = {
+    domain_name = ""
+    tls_custom  = {
+      cert = ""
+      key  = ""
+    }
+    user = {
       name                = "smrtanalysis"
       ssh_authorized_keys = []
     }

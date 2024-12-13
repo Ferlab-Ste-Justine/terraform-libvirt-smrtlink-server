@@ -67,6 +67,7 @@ The module takes the following variables as input:
 
 - **smrtlink**: Smrt-link configuration. It has the following keys:
   - **domain_name**: Fully qualified domain name of the server.
+  - **tls_custom**: Tls custom configuration (**cert** + **key**) to replace the default self-signed one.
   - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user.
   - **sequencing_system**: Sequencing system to use for the smrt-link installation.
   - **revio**: Revio sequencing system settings. **sequencing_system** needs to be set to **revio**. It has the following keys:
