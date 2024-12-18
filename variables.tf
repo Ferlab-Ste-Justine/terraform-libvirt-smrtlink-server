@@ -269,6 +269,14 @@ variable "smrtlink" {
       admin     = string
       pbicsuser = string
     })
+    keycloak_users = optional(list(object({
+      id         = string
+      password   = string
+      role       = string
+      first_name = string
+      last_name  = string
+      email      = string
+    })), [])
     smtp = optional(object({
       host     = string
       port     = number
@@ -314,7 +322,8 @@ variable "smrtlink" {
       admin     = ""
       pbicsuser = ""
     }
-    smtp = {
+    keycloak_users = []
+    smtp           = {
       host     = ""
       port     = 25
       user     = ""
