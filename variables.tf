@@ -232,8 +232,7 @@ variable "smrtlink" {
       name                = "smrtanalysis"
       ssh_authorized_keys = []
     })
-    sequencing_system = optional(string, "revio"),
-    revio             = optional(object({
+    revio = optional(object({
       srs_transfer = object({
         name        = string
         description = string
@@ -262,7 +261,7 @@ variable "smrtlink" {
         secret_key = ""
       }
     })
-    release_version         = optional(string, "13.1.0.221970"),
+    release_version         = optional(string, "25.1.0.257715"),
     install_lite            = optional(bool, true)
     workers_count           = optional(number, 4)
     keycloak_user_passwords = object({
@@ -299,8 +298,7 @@ variable "smrtlink" {
       name                = "smrtanalysis"
       ssh_authorized_keys = []
     }
-    sequencing_system = "revio"
-    revio             = {
+    revio = {
       srs_transfer = {
         name        = ""
         description = ""
@@ -315,7 +313,7 @@ variable "smrtlink" {
         secret_key = ""
       }
     }
-    release_version         = "13.1.0.221970"
+    release_version         = "25.1.0.257715"
     install_lite            = true
     workers_count           = 4
     keycloak_user_passwords = {
@@ -329,10 +327,5 @@ variable "smrtlink" {
       user     = ""
       password = ""
     }
-  }
-
-  validation {
-    condition     = contains(["revio", "sequel2"], var.smrtlink.sequencing_system)
-    error_message = "smrtlink.sequencing_system must be 'revio' or 'sequel2'."
   }
 }
