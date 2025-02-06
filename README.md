@@ -70,7 +70,7 @@ The module takes the following variables as input:
   - **tls_custom**: Tls custom configuration to replace the default self-signed one. It has the following keys:
     - **cert**: Certificate file.
     - **key**: Private key file.
-    - **vault_agent_secret_path**: Optional vault secret path for an optional vault agent to configure the Certificate file + Private key file and keep them up-to-date. If set, **cert** + **key** values above can be left empty. The secret in vault is expected to have the **certificate** and **key** keys.
+    - **vault_agent_secret_path**: Optional vault secret path for an optional vault agent to configure the Certificate file + Private key file and keep them up-to-date. If set, **cert** + **key** values above can be left empty. The secret in vault is expected to have the **cert** and **key** keys.
   - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user.
   - **revio**: Revio sequencing system settings. It has the following keys:
     - **srs_transfer**: File Transfer Location settings (**name** + **description** + **host** + **dest_path** + **username** + **ssh_key**).
