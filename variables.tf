@@ -214,16 +214,43 @@ variable "install_dependencies" {
   default     = true
 }
 
+variable "vault_agent" {
+  type = object({
+    enabled     = bool
+    auth_method = object({
+      config = object({
+        role_id   = string
+        secret_id = string
+      })
+    })
+    vault_address = string
+    vault_ca_cert = string
+  })
+  default = {
+    enabled = false
+    auth_method = {
+      config = {
+        role_id   = ""
+        secret_id = ""
+      }
+    }
+    vault_address = ""
+    vault_ca_cert = ""
+  }
+}
+
 variable "smrtlink" {
   description = "Configuration for the smrt-link server"
   type        = object({
     domain_name = optional(string, "")
     tls_custom  = optional(object({
-      cert = string
-      key  = string
+      cert                    = string
+      key                     = string
+      vault_agent_secret_path = string
     }), {
-      cert = ""
-      key  = ""
+      cert                    = ""
+      key                     = ""
+      vault_agent_secret_path = ""
     })
     user = optional(object({
       name                = string
@@ -291,8 +318,9 @@ variable "smrtlink" {
   default = {
     domain_name = ""
     tls_custom  = {
-      cert = ""
-      key  = ""
+      cert                    = ""
+      key                     = ""
+      vault_agent_secret_path = ""
     }
     user = {
       name                = "smrtanalysis"

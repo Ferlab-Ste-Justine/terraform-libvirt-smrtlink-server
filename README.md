@@ -67,7 +67,10 @@ The module takes the following variables as input:
 
 - **smrtlink**: Smrt-link configuration. It has the following keys:
   - **domain_name**: Fully qualified domain name of the server.
-  - **tls_custom**: Tls custom configuration (**cert** + **key**) to replace the default self-signed one.
+  - **tls_custom**: Tls custom configuration to replace the default self-signed one. It has the following keys:
+    - **cert**: Certificate file.
+    - **key**: Private key file.
+    - **vault_agent_secret_path**: Optional vault secret path for an optional vault agent to configure the Certificate file + Private key file and keep them up-to-date. If set, **cert** + **key** values above can be left empty. The secret in vault is expected to have the **certificate** and **key** keys.
   - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user.
   - **revio**: Revio sequencing system settings. It has the following keys:
     - **srs_transfer**: File Transfer Location settings (**name** + **description** + **host** + **dest_path** + **username** + **ssh_key**).
@@ -78,3 +81,11 @@ The module takes the following variables as input:
   - **keycloak_user_passwords**: Keycloak user passwords of built-in users (**admin** + **pbicsuser**) to change from defaults.
   - **keycloak_users**: Keycloak users to create (**id** + **password** + **role** + **first_name** + **last_name** + **email**).
   - **smtp**: Smtp configuration (**host** + **port** + **user** + **password**) for email notifications of analysis jobs.
+- **vault_agent**: Parameters for the optional vault agent that will be used to manage the dynamic secrets in the vm.
+  - **enabled**: If set to true, a vault agent service will be setup and will run in the vm.
+  - **auth_method**: Auth method the vault agent will use to authenticate with vault. Currently, only approle is supported.
+    - **config**: Configuration parameters for the auth method.
+      - **role_id**: Id of the app role to us.
+      - **secret_id**: Authentication secret to use the app role.
+  - **vault_address**: Endpoint to use to talk to vault.
+  - **vault_ca_cert**: CA certificate to use to validate vault's certificate.
