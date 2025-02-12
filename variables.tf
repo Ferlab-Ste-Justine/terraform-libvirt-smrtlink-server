@@ -118,6 +118,8 @@ variable "fluentbit" {
   type = object({
     enabled = bool
     smrtlink_tag = string
+    s3_backup_tag = string
+    s3_restore_tag = string
     node_exporter_tag = string
     metrics = object({
       enabled = bool
@@ -134,6 +136,8 @@ variable "fluentbit" {
   default = {
     enabled = false
     smrtlink_tag = ""
+    s3_backup_tag = ""
+    s3_restore_tag = ""
     node_exporter_tag = ""
     metrics = {
       enabled = false
@@ -212,6 +216,37 @@ variable "install_dependencies" {
   description = "Whether to install all dependencies in cloud-init"
   type        = bool
   default     = true
+}
+
+variable "s3_backups" {
+  description = "Configuration to continuously backup the data paths in s3"
+  sensitive   = true
+  type        = object({
+    enabled                = bool
+    restore                = bool
+    symlinks               = string
+    url                    = string
+    region                 = string
+    access_key             = string
+    secret_key             = string
+    server_side_encryption = string
+    calendar               = string
+    bucket                 = string
+    ca_cert                = string
+  })
+  default = {
+    enabled                = false
+    restore                = false
+    symlinks               = "copy"
+    url                    = ""
+    region                 = ""
+    access_key             = ""
+    secret_key             = ""
+    server_side_encryption = ""
+    calendar               = ""
+    bucket                 = ""
+    ca_cert                = ""
+  }
 }
 
 variable "vault_agent" {
@@ -313,6 +348,15 @@ variable "smrtlink" {
       port     = 25
       user     = ""
       password = ""
+    }),
+    db_backups = optional(object({
+      enabled         = bool
+      cron_expression = string
+      retention_days  = number
+    }), {
+      enabled         = false
+      cron_expression = "0 0 * * *"  # daily at midnight
+      retention_days  = 7
     })
   })
   default = {
@@ -354,6 +398,11 @@ variable "smrtlink" {
       port     = 25
       user     = ""
       password = ""
+    }
+    db_backups = {
+      enabled         = false
+      cron_expression = "0 0 * * *"  # daily at midnight
+      retention_days  = 7
     }
   }
 }

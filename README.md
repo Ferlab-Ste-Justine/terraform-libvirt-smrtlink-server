@@ -53,6 +53,8 @@ The module takes the following variables as input:
 - **fluentbit**: Fluent Bit configuration for log routing and metrics collection. It is an object with the following fields:
   - **enabled**: If set to false (the default), Fluent Bit will not be installed.
   - **smrtlink_tag**: Tag to assign to logs coming from Smrt-link.
+  - **s3_backup_tag**: Tag to assign to logs coming from the s3 backup service, if it is enabled.
+  - **s3_restore_tag**: Tag to assign to logs coming from the s3 restore service which runs once when the vm is created, if it is enabled.
   - **node_exporter_tag**: Tag for logs from the Prometheus node exporter.
   - **metrics**: Configuration for metrics collection.
   - **forward**: Configuration for the forward plugin to communicate with a remote Fluentbit node.
@@ -81,6 +83,8 @@ The module takes the following variables as input:
   - **keycloak_user_passwords**: Keycloak user passwords of built-in users (**admin** + **pbicsuser**) to change from defaults.
   - **keycloak_users**: Keycloak users to create (**id** + **password** + **role** + **first_name** + **last_name** + **email**).
   - **smtp**: Smtp configuration (**host** + **port** + **user** + **password**) for email notifications of analysis jobs.
+  - **db_backups**: Database backups configuration (**enabled** + **cron_expression** + **retention_days**). Backups are done on a periodic basis and stored locally, if enabled.
+
 - **vault_agent**: Parameters for the optional vault agent that will be used to manage the dynamic secrets in the vm.
   - **enabled**: If set to true, a vault agent service will be setup and will run in the vm.
   - **auth_method**: Auth method the vault agent will use to authenticate with vault. Currently, only approle is supported.
@@ -89,3 +93,16 @@ The module takes the following variables as input:
       - **secret_id**: Authentication secret to use the app role.
   - **vault_address**: Endpoint to use to talk to vault.
   - **vault_ca_cert**: CA certificate to use to validate vault's certificate.
+
+- **s3_backups**: Configuration to continuously synchronize the data directories used by smrt-link on an s3-compatible object store bucket. It has the following keys:
+  - **enabled**: Whether enable to s3 backups.
+  - **restore**: If set to true, an incoming synchronization will be done once from the backups when the vm is created, and before backups are started, to populate the data directories with backed up data.
+  - **symlinks**: Determines how symlinks will be handled. Can be **skip** (symlinks will be ignored), **copy** (symlinks will be preserved) or **follow** (the destination file of the symlinks will be copied).
+  - **url**: Url of the s3-compatible object store.
+  - **region**: Region to use in the object store.
+  - **access_key**: User id for the object store.
+  - **secret_key**: User password for the object store.
+  - **server_side_encryption**: Encryption format (ex: **aws:kms**) of the s3 bucket if any. An empty string can be passed if the bucket is not encrypted. It will be passed to the **server_side_encryption** property in rclone's configuration.
+  - **calendar**: Frequency of the backup synchronization, in systemd time format (see: https://www.freedesktop.org/software/systemd/man/systemd.time.html#).
+  - **bucket**: Bucket to backup the filesystem info.
+  - **ca_cert**: Optional CA certificate to use to authentify the object store's server certificate. Can be left empty if the object store doesn't use https or has a server certificate that is signed by a CA already in the vm's system.
