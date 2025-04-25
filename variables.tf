@@ -176,6 +176,7 @@ variable "fluentbit_dynamic_config" {
       trusted_gpg_keys = list(string)
       auth             = object({
         client_ssh_key         = string
+        client_ssh_user        = string
         server_ssh_fingerprint = string
       })
     })
@@ -201,6 +202,7 @@ variable "fluentbit_dynamic_config" {
       trusted_gpg_keys = []
       auth             = {
         client_ssh_key         = ""
+        client_ssh_user        = ""
         server_ssh_fingerprint = ""
       }
     }
@@ -295,32 +297,73 @@ variable "smrtlink" {
       ssh_authorized_keys = []
     })
     revio = optional(object({
-      srs_transfer = object({
+      srs_transfer = optional(object({
+        name          = string
+        description   = string
+        host          = string
+        dest_path     = string
+        relative_path = optional(string, "")
+        username      = string
+        ssh_key       = string
+      }), {
+        name          = ""
+        description   = ""
+        host          = ""
+        dest_path     = ""
+        relative_path = ""
+        username      = ""
+        ssh_key       = ""
+      })
+      s3compatible_transfer = optional(object({
         name        = string
         description = string
-        host        = string
-        dest_path   = string
-        username    = string
-        ssh_key     = string
+        endpoint    = string
+        bucket      = string
+        region      = optional(string, "")
+        path        = optional(string, "")
+        access_key  = string
+        secret_key  = string
+      }), {
+        name        = ""
+        description = ""
+        endpoint    = ""
+        bucket      = ""
+        region      = ""
+        path        = ""
+        access_key  = ""
+        secret_key  = ""
       })
       instrument = object({
-        name       = string
-        ip_address = string
-        secret_key = string
+        name          = string
+        ip_address    = string
+        secret_key    = string
+        transfer_name = string
       })
     }), {
       srs_transfer = {
+        name          = ""
+        description   = ""
+        host          = ""
+        dest_path     = ""
+        relative_path = ""
+        username      = ""
+        ssh_key       = ""
+      },
+      s3compatible_transfer = {
         name        = ""
         description = ""
-        host        = ""
-        dest_path   = ""
-        username    = ""
-        ssh_key     = ""
+        endpoint    = ""
+        bucket      = ""
+        region      = ""
+        path        = ""
+        access_key  = ""
+        secret_key  = ""
       },
       instrument = {
-        name       = ""
-        ip_address = ""
-        secret_key = ""
+        name          = ""
+        ip_address    = ""
+        secret_key    = ""
+        transfer_name = ""
       }
     })
     release_version         = optional(string, "25.1.0.257715"),
@@ -372,17 +415,29 @@ variable "smrtlink" {
     }
     revio = {
       srs_transfer = {
+        name          = ""
+        description   = ""
+        host          = ""
+        dest_path     = ""
+        relative_path = ""
+        username      = ""
+        ssh_key       = ""
+      }
+      s3compatible_transfer = {
         name        = ""
         description = ""
-        host        = ""
-        dest_path   = ""
-        username    = ""
-        ssh_key     = ""
+        endpoint    = ""
+        bucket      = ""
+        region      = ""
+        path        = ""
+        access_key  = ""
+        secret_key  = ""
       }
       instrument = {
-        name       = ""
-        ip_address = ""
-        secret_key = ""
+        name          = ""
+        ip_address    = ""
+        secret_key    = ""
+        transfer_name = ""
       }
     }
     release_version         = "25.1.0.257715"
@@ -404,5 +459,14 @@ variable "smrtlink" {
       cron_expression = "0 0 * * *"  # daily at midnight
       retention_days  = 7
     }
+  }
+
+  validation {
+    condition = (
+      var.smrtlink.revio == null ||
+      var.smrtlink.revio.instrument.transfer_name == var.smrtlink.revio.srs_transfer.name ||
+      var.smrtlink.revio.instrument.transfer_name == var.smrtlink.revio.s3compatible_transfer.name
+    )
+    error_message = "If 'smrtlink.revio' is provided, at least one of 'srs_transfer' or 's3compatible_transfer' must be provided with a 'name' matching 'instrument.transfer_name'."
   }
 }

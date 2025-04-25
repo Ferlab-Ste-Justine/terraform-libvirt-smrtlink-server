@@ -75,8 +75,9 @@ The module takes the following variables as input:
     - **vault_agent_secret_path**: Optional vault secret path for an optional vault agent to configure the Certificate file + Private key file and keep them up-to-date. If set, **cert** + **key** values above can be left empty. The secret in vault is expected to have the **cert** and **key** keys.
   - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user.
   - **revio**: Revio sequencing system settings. It has the following keys:
-    - **srs_transfer**: File Transfer Location settings (**name** + **description** + **host** + **dest_path** + **username** + **ssh_key**).
-    - **instrument**: Intrument (connected to the File Transfer Location) settings (**name** + **ip_address** + **secret_key**).
+    - **srs_transfer**: File Transfer Location settings (**name** + **description** + **host** + **dest_path** + **relative_path** + **username** + **ssh_key**) for the `ssh (srs)` scheme.
+    - **s3compatible_transfer**: File Transfer Location settings (**name** + **description** + **endpoint** + **bucket** + **region** + **path** + **access_key** + **secret_key**) for the `S3-compatible storage` scheme.
+    - **instrument**: Instrument (connected to a File Transfer Location) settings (**name** + **ip_address** + **secret_key** + **transfer_name**).
   - **release_version**: Smrt-link release version to install.
   - **install_lite**: Whether to install smrt-link lite edition.
   - **workers_count**: Maximum number of simultaneous analysis jobs.
