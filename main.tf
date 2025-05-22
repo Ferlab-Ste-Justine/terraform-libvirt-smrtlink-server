@@ -87,7 +87,7 @@ locals {
 }
 
 module "s3_backups" {
-  source       = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//s3-syncs?ref=v0.37.4"
+  source       = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//s3-syncs?ref=v0.39.0"
   object_store = {
     url                    = var.s3_backups.url
     region                 = var.s3_backups.region
