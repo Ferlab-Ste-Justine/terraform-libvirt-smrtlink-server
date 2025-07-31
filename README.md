@@ -97,7 +97,7 @@ The module takes the following variables as input:
 
 - **s3_backups**: Configuration to continuously synchronize the data directories used by smrt-link on an s3-compatible object store bucket. It has the following keys:
   - **enabled**: Whether enable to s3 backups.
-  - **restore**: If set to true, an incoming synchronization will be done once from the backups when the vm is created, and before backups are started, to populate the data directories with backed up data.
+  - **restore**: If set to true, an incoming synchronization will be done once from the backups when the vm is created, and before backups are started, to populate the data directories with backed up data followed by a restore of the latest **smrtlinkdb** database backup.
   - **symlinks**: Determines how symlinks will be handled. Can be **skip** (symlinks will be ignored), **copy** (symlinks will be preserved) or **follow** (the destination file of the symlinks will be copied).
   - **url**: Url of the s3-compatible object store.
   - **region**: Region to use in the object store.
