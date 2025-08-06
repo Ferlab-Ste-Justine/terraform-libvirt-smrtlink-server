@@ -12,3 +12,18 @@ users:
   - name: ${ssh_admin_user}
     ssh_authorized_keys:
       - "${ssh_admin_public_key}"
+%{ if install_dependencies ~}
+  - name: ${user.name}
+    lock_passwd: true
+    shell: /bin/bash
+%{ if length(user.ssh_authorized_keys) > 0 ~}
+    ssh_authorized_keys:
+%{ for key in user.ssh_authorized_keys ~}
+      - "${key}"
+%{ endfor ~}
+%{ endif ~}
+%{ endif ~}
+
+runcmd:
+  - mkdir /var/lib/smrtlink
+  - chown ${user.name}:${user.name} /var/lib/smrtlink

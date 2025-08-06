@@ -24,7 +24,7 @@ locals {
 }
 
 module "network_configs" {
-  source             = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//network?ref=v0.37.4"
+  source             = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//network?ref=v0.44.0"
   network_interfaces = concat(
     [for idx, libvirt_network in var.libvirt_networks: {
       ip = libvirt_network.ip
@@ -46,11 +46,11 @@ module "network_configs" {
 }
 
 module "smrtlink_configs" {
-  source                  = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//smrtlink?ref=v0.37.4"
+  source                  = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//smrtlink?ref=v0.44.0"
   install_dependencies    = var.install_dependencies
   domain_name             = var.smrtlink.domain_name
   tls_custom              = var.smrtlink.tls_custom
-  user                    = var.smrtlink.user
+  user                    = var.smrtlink.user.name
   revio                   = var.smrtlink.revio
   release_version         = var.smrtlink.release_version
   install_lite            = var.smrtlink.install_lite
@@ -59,6 +59,7 @@ module "smrtlink_configs" {
   keycloak_users          = var.smrtlink.keycloak_users
   smtp                    = var.smrtlink.smtp
   db_backups              = var.smrtlink.db_backups
+  restore_db              = var.s3_backups.restore
 }
 
 locals {
@@ -87,7 +88,7 @@ locals {
 }
 
 module "s3_backups" {
-  source       = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//s3-syncs?ref=v0.39.0"
+  source       = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//s3-syncs?ref=v0.44.0"
   object_store = {
     url                    = var.s3_backups.url
     region                 = var.s3_backups.region
@@ -109,16 +110,17 @@ module "s3_backups" {
     paths           = var.s3_backups.restore ? local.s3_backups_paths : []
     symlinks        = var.s3_backups.symlinks
   }
+  user                 = var.smrtlink.user.name
   install_dependencies = var.install_dependencies
 }
 
 module "prometheus_node_exporter_configs" {
-  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=v0.37.4"
+  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//prometheus-node-exporter?ref=v0.44.0"
   install_dependencies = var.install_dependencies
 }
 
 module "chrony_configs" {
-  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=v0.37.4"
+  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//chrony?ref=v0.44.0"
   install_dependencies = var.install_dependencies
   chrony               = {
     servers  = var.chrony.servers
@@ -128,7 +130,7 @@ module "chrony_configs" {
 }
 
 module "fluentbit_updater_etcd_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.37.4"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//configurations-auto-updater?ref=v0.44.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = "/etc/fluent-bit-customization/dynamic-config"
@@ -162,7 +164,7 @@ module "fluentbit_updater_etcd_configs" {
 }
 
 module "fluentbit_updater_git_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.37.4"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//gitsync?ref=v0.44.0"
   install_dependencies = var.install_dependencies
   filesystem = {
     path = "/etc/fluent-bit-customization/dynamic-config"
@@ -182,7 +184,7 @@ module "fluentbit_updater_git_configs" {
 }
 
 module "fluentbit_configs" {
-  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluent-bit?ref=v0.37.4"
+  source = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//fluent-bit?ref=v0.44.0"
   install_dependencies = var.install_dependencies
   fluentbit = {
     metrics = var.fluentbit.metrics
@@ -206,7 +208,8 @@ module "fluentbit_configs" {
         service = "node-exporter.service"
       }
     ])
-    forward = var.fluentbit.forward
+    log_files = []
+    forward   = var.fluentbit.forward
   }
   dynamic_config = {
     enabled = var.fluentbit_dynamic_config.enabled
@@ -215,7 +218,7 @@ module "fluentbit_configs" {
 }
 
 module "vault_agent_configs" {
-  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//vault-agent?ref=v0.37.4"
+  source               = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//vault-agent?ref=v0.44.0"
   install_dependencies = var.install_dependencies
   vault_agent          = {
     auth_method            = var.vault_agent.auth_method
@@ -226,7 +229,7 @@ module "vault_agent_configs" {
 }
 
 module "data_volume_configs" {
-  source  = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//data-volumes?ref=v0.37.4"
+  source  = "git::https://github.com/Ferlab-Ste-Justine/terraform-cloudinit-templates.git//data-volumes?ref=v0.44.0"
   volumes = [{
     label         = "smrtlink_data"
     device        = "vdb"
@@ -238,12 +241,7 @@ module "data_volume_configs" {
 
 locals {
   cloudinit_templates = concat(
-    # Vault Agent first so it's up-and-running before SMRT Link
-    var.vault_agent.enabled ? [{
-      filename     = "vault_agent.cfg"
-      content_type = "text/cloud-config"
-      content      = module.vault_agent_configs.configuration
-    }] : [],
+    # Base first so it's up-and-running before the rest (where the 'user' is needed)
     [
       {
         filename     = "base.cfg"
@@ -255,9 +253,29 @@ locals {
             ssh_admin_public_key = var.ssh_admin_public_key
             ssh_admin_user       = var.ssh_admin_user
             admin_user_password  = var.admin_user_password
+            install_dependencies = var.install_dependencies
+            user                 = var.smrtlink.user
           }
         )
-      },
+      }
+    ],
+    # Data Volume + S3 Backups (including a potential restore) + Vault Agent then so it's up-and-running before SMRT Link starts
+    var.data_volume_id != "" ? [{
+      filename     = "data_volume.cfg"
+      content_type = "text/cloud-config"
+      content      = module.data_volume_configs.configuration
+    }] : [],
+    var.s3_backups.enabled ? [{
+      filename     = "s3_backups.cfg"
+      content_type = "text/cloud-config"
+      content      = module.s3_backups.configuration
+    }] : [],
+    var.vault_agent.enabled ? [{
+      filename     = "vault_agent.cfg"
+      content_type = "text/cloud-config"
+      content      = module.vault_agent_configs.configuration
+    }] : [],
+    [
       {
         filename     = "smrtlink.cfg"
         content_type = "text/cloud-config"
@@ -269,11 +287,6 @@ locals {
         content      = module.prometheus_node_exporter_configs.configuration
       }
     ],
-    var.s3_backups.enabled ? [{
-      filename     = "s3_backups.cfg"
-      content_type = "text/cloud-config"
-      content      = module.s3_backups.configuration
-    }] : [],
     var.chrony.enabled ? [{
       filename     = "chrony.cfg"
       content_type = "text/cloud-config"
@@ -293,12 +306,7 @@ locals {
       filename     = "fluent_bit.cfg"
       content_type = "text/cloud-config"
       content      = module.fluentbit_configs.configuration
-    }] : [],
-    var.data_volume_id != "" ? [{
-      filename     = "data_volume.cfg"
-      content_type = "text/cloud-config"
-      content      = module.data_volume_configs.configuration
-    }]: []
+    }] : []
   )
 }
 
