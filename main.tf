@@ -107,14 +107,14 @@ module "s3_backups" {
     calendar        = var.s3_backups.calendar
     bucket          = var.s3_backups.bucket
     paths           = local.s3_backups_paths
-    symlinks        = var.s3_backups.symlinks
+    symlinks        = "copy"
   }
   incoming_sync = {
     sync_once       = true
     calendar        = var.s3_backups.calendar
     bucket          = var.s3_backups.bucket
     paths           = var.s3_backups.restore ? local.s3_backups_paths : []
-    symlinks        = var.s3_backups.symlinks
+    symlinks        = "copy"
   }
   user                 = var.smrtlink.user.name
   install_dependencies = var.install_dependencies

@@ -226,7 +226,6 @@ variable "s3_backups" {
   type        = object({
     enabled                = bool
     restore                = bool
-    symlinks               = string
     url                    = string
     region                 = string
     access_key             = string
@@ -239,7 +238,6 @@ variable "s3_backups" {
   default = {
     enabled                = false
     restore                = false
-    symlinks               = "copy"
     url                    = ""
     region                 = ""
     access_key             = ""
@@ -315,7 +313,7 @@ variable "smrtlink" {
       vault_agent_secret_path = ""
     })
     user = optional(object({
-      name                = string
+      name                = optional(string, "smrtanalysis")
       ssh_authorized_keys = list(string)
     }), {
       name                = "smrtanalysis"
