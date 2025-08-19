@@ -81,7 +81,7 @@ The module takes the following variables as input:
   - **release_version**: Smrt-link release version to install. Defaults to **25.1.0.257715**.
   - **install_lite**: Whether to install smrt-link lite edition. Defaults to **true**.
   - **workers_count**: Maximum number of simultaneous analysis jobs. Defaults to **4**.
-  - **keycloak_user_passwords**: Keycloak user passwords of built-in users (**admin** + **pbicsuser**) to change from defaults.
+  - **keycloak_user_passwords**: Keycloak user passwords of built-in users (**admin** + **pbinstrument**) to change from defaults.
   - **keycloak_users**: Optional Keycloak users to create (**id** + **password** + **role** + **first_name** + **last_name** + **email**).
   - **smtp**: Optional SMTP configuration (**host** + **port** + **user** + **password**) for email notifications of analysis jobs.
   - **db_backups**: Optional database backups configuration (**enabled** + **cron_expression** + **retention_days**). Backups are done on a periodic basis and stored locally, if enabled.
