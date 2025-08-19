@@ -251,6 +251,31 @@ variable "s3_backups" {
   }
 }
 
+variable "s3_mounts" {
+  description = "Parameters of s3 mounts to have access to buckets from the filesystem"
+  sensitive   = true
+  type        = list(object({
+    bucket_name   = string
+    access_key    = string
+    secret_key    = string
+    non_amazon_s3 = optional(object({
+      url        = string
+      check_cert = optional(bool, true)
+    }), {
+      url        = ""
+      check_cert = true
+    })
+    folder = optional(object({
+      owner = optional(string, "smrtanalysis")
+      umask = optional(string, "0007")
+    }), {
+      owner = "smrtanalysis"
+      umask = "0007"
+    })
+  }))
+  default = []
+}
+
 variable "vault_agent" {
   type = object({
     enabled     = bool

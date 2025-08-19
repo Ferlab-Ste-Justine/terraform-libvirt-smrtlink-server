@@ -68,23 +68,23 @@ The module takes the following variables as input:
 - **install_dependencies**: Whether cloud-init should install external dependencies (should be set to false if you already provide an image with the external dependencies built-in). Defaults to **true**.
 
 - **smrtlink**: Smrt-link configuration. It has the following keys:
-  - **domain_name**: Fully qualified domain name of the server.
-  - **tls_custom**: Tls custom configuration to replace the default self-signed one. It has the following keys:
+  - **domain_name**: Optional fully qualified domain name of the server.
+  - **tls_custom**: Optional TLS custom configuration to replace the default self-signed one. It has the following keys:
     - **cert**: Certificate file.
     - **key**: Private key file.
     - **vault_agent_secret_path**: Optional vault secret path for an optional vault agent to configure the Certificate file + Private key file and keep them up-to-date. If set, **cert** + **key** values above can be left empty. The secret in vault is expected to have the **cert** and **key** keys.
-  - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user.
-  - **revio**: Revio sequencing system settings. It has the following keys:
+  - **user**: Smrt-link **name** + **ssh_authorized_keys** of the install user. Defaults to **smrtanalysis** with no authorized keys.
+  - **revio**: Optional Revio sequencing system settings. It has the following keys:
     - **srs_transfer**: File Transfer Location settings (**name** + **description** + **host** + **dest_path** + **relative_path** + **username** + **ssh_key**) for the `ssh (srs)` scheme.
     - **s3compatible_transfer**: File Transfer Location settings (**name** + **description** + **endpoint** + **bucket** + **region** + **path** + **access_key** + **secret_key**) for the `S3-compatible storage` scheme.
     - **instrument**: Instrument (connected to a File Transfer Location) settings (**name** + **ip_address** + **secret_key** + **transfer_name**).
-  - **release_version**: Smrt-link release version to install.
-  - **install_lite**: Whether to install smrt-link lite edition.
-  - **workers_count**: Maximum number of simultaneous analysis jobs.
+  - **release_version**: Smrt-link release version to install. Defaults to **25.1.0.257715**.
+  - **install_lite**: Whether to install smrt-link lite edition. Defaults to **true**.
+  - **workers_count**: Maximum number of simultaneous analysis jobs. Defaults to **4**.
   - **keycloak_user_passwords**: Keycloak user passwords of built-in users (**admin** + **pbicsuser**) to change from defaults.
-  - **keycloak_users**: Keycloak users to create (**id** + **password** + **role** + **first_name** + **last_name** + **email**).
-  - **smtp**: Smtp configuration (**host** + **port** + **user** + **password**) for email notifications of analysis jobs.
-  - **db_backups**: Database backups configuration (**enabled** + **cron_expression** + **retention_days**). Backups are done on a periodic basis and stored locally, if enabled.
+  - **keycloak_users**: Optional Keycloak users to create (**id** + **password** + **role** + **first_name** + **last_name** + **email**).
+  - **smtp**: Optional SMTP configuration (**host** + **port** + **user** + **password**) for email notifications of analysis jobs.
+  - **db_backups**: Optional database backups configuration (**enabled** + **cron_expression** + **retention_days**). Backups are done on a periodic basis and stored locally, if enabled.
 
 - **vault_agent**: Parameters for the optional vault agent that will be used to manage the dynamic secrets in the vm.
   - **enabled**: If set to true, a vault agent service will be setup and will run in the vm.
@@ -95,7 +95,7 @@ The module takes the following variables as input:
   - **vault_address**: Endpoint to use to talk to vault.
   - **vault_ca_cert**: CA certificate to use to validate vault's certificate.
 
-- **s3_backups**: Configuration to continuously synchronize the data directories used by smrt-link on an s3-compatible object store bucket. It has the following keys:
+- **s3_backups**: Optional configuration to continuously synchronize the data directories used by smrt-link on an s3-compatible object store bucket. It has the following keys:
   - **enabled**: Whether enable to s3 backups.
   - **restore**: If set to true, an incoming synchronization will be done once from the backups when the vm is created, and before backups are started, to populate the data directories with backed up data followed by a restore of the latest **smrtlinkdb** database backup.
   - **symlinks**: Determines how symlinks will be handled. Can be **skip** (symlinks will be ignored), **copy** (symlinks will be preserved) or **follow** (the destination file of the symlinks will be copied).
@@ -107,3 +107,10 @@ The module takes the following variables as input:
   - **calendar**: Frequency of the backup synchronization, in systemd time format (see: https://www.freedesktop.org/software/systemd/man/systemd.time.html#).
   - **bucket**: Bucket to backup the filesystem info.
   - **ca_cert**: Optional CA certificate to use to authentify the object store's server certificate. Can be left empty if the object store doesn't use https or has a server certificate that is signed by a CA already in the vm's system.
+
+- **s3_mounts**: Optional list of s3 mounts with their configurations. Each entry in the list is a map with the following keys:
+  - **bucket_name**: Name of the bucket of the object store to mount.
+  - **access_key**: User id for the object store.
+  - **secret_key**: User password for the object store.
+  - **non_amazon_s3**: Optional non-amazon s3 settings (**url** + **check_cert**) if a s3-compatible object store is used.
+  - **folder**: Optional folder settings (**owner** which defaults to `smrtanalysis` + **umask** which defaults to `0007` to let full access to the owner and its group, note here that this controls permissions seen on the local filesystem and doesn't affect actual s3 permissions).
