@@ -257,11 +257,11 @@ variable "s3_mounts" {
     access_key    = string
     secret_key    = string
     non_amazon_s3 = optional(object({
-      url        = string
-      check_cert = optional(bool, true)
+      url     = string
+      ca_cert = optional(string, "")
     }), {
-      url        = ""
-      check_cert = true
+      url     = ""
+      ca_cert = ""
     })
     folder = optional(object({
       owner = optional(string, "smrtanalysis")

@@ -111,5 +111,5 @@ The module takes the following variables as input:
   - **bucket_name**: Name of the bucket of the object store to mount.
   - **access_key**: User id for the object store.
   - **secret_key**: User password for the object store.
-  - **non_amazon_s3**: Optional non-amazon s3 settings (**url** + **check_cert**) if a s3-compatible object store is used.
+  - **non_amazon_s3**: Optional non-amazon s3 settings (**url** + **ca_cert**) if a s3-compatible object store is used.
   - **folder**: Optional folder settings (**owner** which defaults to `smrtanalysis` + **umask** which defaults to `0007` to let full access to the owner and its group, note here that this controls permissions seen on the local filesystem and doesn't affect actual s3 permissions).
