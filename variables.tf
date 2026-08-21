@@ -270,6 +270,7 @@ variable "s3_mounts" {
       owner = "smrtanalysis"
       umask = "0007"
     })
+    tmpdir = optional(string, "/tmp")
   }))
   default = []
 }
