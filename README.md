@@ -113,3 +113,4 @@ The module takes the following variables as input:
   - **secret_key**: User password for the object store.
   - **non_amazon_s3**: Optional non-amazon s3 settings (**url** + **ca_cert**) if a s3-compatible object store is used.
   - **folder**: Optional folder settings (**owner** which defaults to `smrtanalysis` + **umask** which defaults to `0007` to let full access to the owner and its group, note here that this controls permissions seen on the local filesystem and doesn't affect actual s3 permissions).
+  - **tmpdir**: Optional local folder to create and use for s3fs temporary files. Defaults to **/tmp**.
